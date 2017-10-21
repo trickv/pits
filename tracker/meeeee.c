@@ -19,11 +19,11 @@
 #include <sys/statvfs.h>
 #include <inttypes.h>
 
-//#include "gps.h"
+#include "gps.h"
 #include "DS18B20.h"
 #include "adc.h"
 #include "adc_i2c.h"
-#include "misc.h"
+//#include "misc.h"
 #include "snapper.h"
 #include "led.h"
 #include "bmp085.h"
@@ -36,7 +36,7 @@
 #ifdef EXTRAS_PRESENT
 #	include "ex_tracker.h"
 #endif	
-#include "gps.c"
+//#include "gps.c"
 
 
 int main(void)

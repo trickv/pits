@@ -3,7 +3,7 @@
 SRC=$(wildcard *.c)
 HED=$(wildcard *.h)
 OBJ=$(SRC:.c=.o) # replaces the .c from SRC with .o
-EXE=tracker
+EXE=meeeee
 
 -include ex_Makefile
 
