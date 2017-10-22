@@ -585,21 +585,12 @@ void ProcessLine(struct gps_info *bb, struct TGPS *GPS, char *Buffer, int Count,
 						#endif
 						
 						// Landed?
-						if ((GPS->AscentRate >= -0.1) && (GPS->Altitude <= Config.TargetAltitude+2000) && (GPS->FlightMode >= fmDescending) && (GPS->FlightMode < fmLanded))
-						{
-							GPS->FlightMode = fmLanded;
-							printf("*** LANDED ***\n");
-						}
 					}
 				}
 				if (ActionMask & 2)
 				{
 					GPS->Satellites = satellites;
 				}
-			}
-			if (Config.EnableGPSLogging)
-			{
-				WriteLog("gps.txt", Buffer);
 			}
 		}
 		else if (strncmp(Buffer+3, "RMC", 3) == 0)
@@ -644,10 +635,6 @@ void ProcessLine(struct gps_info *bb, struct TGPS *GPS, char *Buffer, int Count,
 				}
 			}
 
-			if (Config.EnableGPSLogging)
-			{
-				WriteLog("gps.txt", Buffer);
-			}
 		}
 		else if (strncmp(Buffer+3, "GSV", 3) == 0)
         {
@@ -701,32 +688,15 @@ void *GPSLoop(void *some_void_ptr)
 	GPS = (struct TGPS *)some_void_ptr;
 	
 	fp = NULL;
-	if (Config.GPSSource[0])
-	{
-		fp = fopen(Config.GPSSource, "rt");
-	}
-	
 	Length = 0;
 	SentenceCount = 0;
 	
-	if (fp != NULL)
-	{
-		printf("NMEA File GPS using %s\n", Config.GPSSource);
-	}
-	else if (*Config.GPSDevice)
-	{
-		printf("Serial GPS using %s\n", Config.GPSDevice);
-	}
-	else
-	{
-		printf ("I2C GPS using SDA = %d, SCL = %d\n", Config.SDA, Config.SCL);
-	}
 	
     while (1)
     {
 		unsigned char Character;
 	
-		if (OpenGPSPort(&bb, Config.GPSDevice, 0x42, Config.SDA, Config.SCL, 2000, 100))		// struct, i2c address, SDA, SCL, ns clock delay, timeout ms
+		if (OpenGPSPort(&bb, 0, 0x42, 2, 3, 2000, 100))		// struct, i2c address, SDA, SCL, ns clock delay, timeout ms
 		{
 			printf("Failed to open GPS\n");
 			bb.Failed = 1;
@@ -781,22 +751,6 @@ void *GPSLoop(void *some_void_ptr)
 						
 						if (++SentenceCount > 100) SentenceCount = 0;
 						
-						if ((SentenceCount == 10) && Config.Power_Saving)
-						{
-							setGPS_GNSS(&bb);
-						}					
-						else if ((SentenceCount == 20) && Config.Power_Saving)
-						{
-							setGPS_DynamicModel6(&bb);
-						}
-						else if (SentenceCount == 30)
-						{
-							SetPowerMode(&bb, Config.Power_Saving && (GPS->Satellites > 4));
-						}
-						else if (SentenceCount == 40)
-						{
-							SetFlightMode(&bb);
-						}
 					}
 
                		Length = 0;

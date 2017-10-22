@@ -23,7 +23,7 @@
 #include "DS18B20.h"
 #include "adc.h"
 #include "adc_i2c.h"
-//#include "misc.h"
+#include "misc.h"
 #include "snapper.h"
 #include "led.h"
 #include "bmp085.h"
@@ -39,6 +39,7 @@
 //#include "gps.c"
 
 
+struct TConfig Config;
 int main(void)
 {
     pthread_t GPSThread;
@@ -50,4 +51,7 @@ int main(void)
 		fprintf(stderr, "Error creating GPS thread\n");
 		return 1;
 	}
+    while (1) {
+        time_sleep(0.1);
+    }
 }
